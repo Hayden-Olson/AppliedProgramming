@@ -1,6 +1,7 @@
 """
 BlackJack clone.
 """
+import random
 import arcade
 
 # Screen title and size
@@ -122,6 +123,11 @@ class MyGame(arcade.Window):
                 card = Card(card_suit, card_value, CARD_SCALE)
                 card.position = MIDDLE_X, MIDDLE_Y
                 self.card_list.append(card)
+                
+        # Shuffle the cards
+        for pos1 in range(len(self.card_list)):
+            pos2 = random.randrange(len(self.card_list))
+            self.card_list.swap(pos1, pos2)
 
     def on_draw(self):
         """ Render the screen. """
