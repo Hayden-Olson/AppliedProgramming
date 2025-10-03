@@ -98,6 +98,9 @@ class MyGame(arcade.Window):
         """ Render the screen. """
         # Clear the screen
         self.clear()
+        
+        # Draw the mats the cards go on to
+        self.pile_mat_list.draw()
 
         # Draw the cards
         self.card_list.draw()
