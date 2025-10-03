@@ -70,6 +70,9 @@ class MyGame(arcade.Window):
         # Original location of cards we are dragging with the mouse in case
         # they have to go back.
         self.held_cards_original_position = None
+        
+        # Sprite list with all the mats tha cards lay on.
+        self.pile_mat_list = None
 
     def setup(self):
         """ Set up the game here. Call this function to restart the game. """
