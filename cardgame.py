@@ -98,23 +98,23 @@ class MyGame(arcade.Window):
         self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
 
         # Create the mats for the bottom face down and face up piles
-        pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, arcade.csscolor.DARK_OLIVE_GREEN)
+        pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, color = arcade.csscolor.DARK_OLIVE_GREEN)
         pile.position = START_X, BOTTOM_Y
         self.pile_mat_list.append(pile)
 
-        pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, arcade.csscolor.DARK_OLIVE_GREEN)
+        pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, color = arcade.csscolor.DARK_OLIVE_GREEN)
         pile.position = START_X + X_SPACING, BOTTOM_Y
         self.pile_mat_list.append(pile)
 
         # Create the seven middle piles
         for i in range(7):
-            pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, arcade.csscolor.DARK_OLIVE_GREEN)
+            pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, color = arcade.csscolor.DARK_OLIVE_GREEN)
             pile.position = START_X + i * X_SPACING, MIDDLE_Y
             self.pile_mat_list.append(pile)
 
         # Create the top "play" piles
         for i in range(4):
-            pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, arcade.csscolor.DARK_OLIVE_GREEN)
+            pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, color = arcade.csscolor.DARK_OLIVE_GREEN)
             pile.position = START_X + i * X_SPACING, TOP_Y
             self.pile_mat_list.append(pile)
 
