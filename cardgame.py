@@ -26,16 +26,16 @@ MAT_WIDTH = int(CARD_WIDTH * MAT_PERCENT_OVERSIZE)
 VERTICAL_MARGIN_PERCENT = 0.10
 HORIZONTAL_MARGIN_PERCENT = 0.10
 
-# The Y of the bottom row (2 piles)
+# The Y of the bottom row
 BOTTOM_Y = MAT_HEIGHT / 2 + MAT_HEIGHT * VERTICAL_MARGIN_PERCENT
 
 # The X of where to start putting things on the left side
 START_X = MAT_WIDTH / 2 + MAT_WIDTH * HORIZONTAL_MARGIN_PERCENT
 
-# The Y of the top row (4 piles)
+# The Y of the top row
 TOP_Y = SCREEN_HEIGHT - MAT_HEIGHT / 2 - MAT_HEIGHT * VERTICAL_MARGIN_PERCENT
 
-# The Y of the middle row (7 piles)
+# The Y of the middle row
 MIDDLE_Y = SCREEN_HEIGHT / 2
 
 # How far apart each pile goes
@@ -47,6 +47,25 @@ MIDDLE_X = SCREEN_WIDTH / 2
 # Card constants
 CARD_VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
+
+# If we fan out cards stacked on each other, how far apart to fan them?
+CARD_VERTICAL_OFFSET = CARD_HEIGHT * CARD_SCALE * 0.3
+
+# Constants that represent "what pile is what" for the game
+PILE_COUNT = 13
+BOTTOM_FACE_DOWN_PILE = 0
+BOTTOM_FACE_UP_PILE = 1
+PLAY_PILE_1 = 2
+PLAY_PILE_2 = 3
+PLAY_PILE_3 = 4
+PLAY_PILE_4 = 5
+PLAY_PILE_5 = 6
+PLAY_PILE_6 = 7
+PLAY_PILE_7 = 8
+TOP_PILE_1 = 9
+TOP_PILE_2 = 10
+TOP_PILE_3 = 11
+TOP_PILE_4 = 12
 
 class Card(arcade.Sprite):
     """ Card sprite """
