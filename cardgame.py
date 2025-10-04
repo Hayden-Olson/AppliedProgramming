@@ -104,6 +104,9 @@ class MyGame(arcade.Window):
         
         # Sprite list with all the mats tha cards lay on.
         self.pile_mat_list = None
+        
+        # Create a list of lists, each holds a pile of cards.
+        self.piles = None
 
     def setup(self):
         """ Set up the game here. Call this function to restart the game. """
@@ -120,17 +123,19 @@ class MyGame(arcade.Window):
         # Sprite list with all the mats tha cards lay on.
         self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
         
-        # This creates the players mat.
-        pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, color = arcade.csscolor.DARK_OLIVE_GREEN)
-        pile.position = SCREEN_WIDTH / 2, BOTTOM_Y
-        self.pile_mat_list.append(pile)
-        
+        # This makes the mat for the deck of cards
         pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, color = arcade.csscolor.DARK_OLIVE_GREEN)
         pile.position = SCREEN_WIDTH / 2, MIDDLE_Y
         self.pile_mat_list.append(pile)
         
+        # This makes the mat for the computer player
         pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, color = arcade.csscolor.DARK_OLIVE_GREEN)
         pile.position = SCREEN_WIDTH / 2, TOP_Y
+        self.pile_mat_list.append(pile)
+        
+        # This creates the players mat.
+        pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, color = arcade.csscolor.DARK_OLIVE_GREEN)
+        pile.position = SCREEN_WIDTH / 2, BOTTOM_Y
         self.pile_mat_list.append(pile)
 
         # Sprite list with all the cards, no matter what pile they are in.
@@ -147,6 +152,13 @@ class MyGame(arcade.Window):
         for pos1 in range(len(self.card_list)):
             pos2 = random.randrange(len(self.card_list))
             self.card_list.swap(pos1, pos2)
+            
+        # Create a list of lists, each holds a pile of cards.
+        self.piles = [[] for _ in range(PILE_COUNT)]
+
+        # Put all the cards in the bottom face-down pile
+        for card in self.card_list:
+            self.piles[BOTTOM_FACE_DOWN_PILE].append(card)
 
     def on_draw(self):
         """ Render the screen. """
@@ -165,6 +177,24 @@ class MyGame(arcade.Window):
         # Remove, and append to the end
         self.card_list.remove(card)
         self.card_list.append(card)
+        
+    def get_pile_for_card(self, card):
+        """ What pile is this card in? """
+        for index, pile in enumerate(self.piles):
+            if card in pile:
+                return index
+            
+    def remove_card_from_pile(self, card):
+        """ Remove card from whatever pile it was in. """
+        for pile in self.piles:
+            if card in pile:
+                pile.remove(card)
+                break
+            
+    def move_card_to_new_pile(self, card, pile_index):
+        """ Move the card to a new pile """
+        self.remove_card_from_pile(card)
+        self.piles[pile_index].append(card)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
@@ -192,7 +222,7 @@ class MyGame(arcade.Window):
         # If we don't have any cards, who cares
         if len(self.held_cards) == 0:
             return
-        
+
         # Find the closest pile, in case we are in contact with more than one
         pile, distance = arcade.get_closest_sprite(self.held_cards[0], self.pile_mat_list)
         reset_position = True
@@ -200,15 +230,47 @@ class MyGame(arcade.Window):
         # See if we are in contact with the closest pile
         if arcade.check_for_collision(self.held_cards[0], pile):
 
-            # For each held card, move it to the pile we dropped on
-            for i, dropped_card in enumerate(self.held_cards):
-                # Move cards to proper position
-                dropped_card.position = pile.center_x, pile.center_y
+            # What pile is it?
+            pile_index = self.pile_mat_list.index(pile)
 
-            # Success, don't reset position of cards
-            reset_position = False
+            #  Is it the same pile we came from?
+            if pile_index == self.get_pile_for_card(self.held_cards[0]):
+                # If so, who cares. We'll just reset our position.
+                pass
+
+            # Is it on a middle play pile?
+            elif PLAY_PILE_1 <= pile_index <= PLAY_PILE_7:
+                # Are there already cards there?
+                if len(self.piles[pile_index]) > 0:
+                    # Move cards to proper position
+                    top_card = self.piles[pile_index][-1]
+                    for i, dropped_card in enumerate(self.held_cards):
+                        dropped_card.position = top_card.center_x + CARD_VERTICAL_OFFSET * (i + 1), \
+                                                top_card.center_y 
+                else:
+                    # Are there no cards in the middle play pile?
+                    for i, dropped_card in enumerate(self.held_cards):
+                        # Move cards to proper position
+                        dropped_card.position = pile.center_x + CARD_VERTICAL_OFFSET * i, \
+                                                pile.center_y
+
+                for card in self.held_cards:
+                    # Cards are in the right position, but we need to move them to the right list
+                    self.move_card_to_new_pile(card, pile_index)
+
+                # Success, don't reset position of cards
+                reset_position = False
 
             # Release on top play pile? And only one card held?
+            elif TOP_PILE_1 <= pile_index <= TOP_PILE_4 and len(self.held_cards) == 1:
+                # Move position of card to pile
+                self.held_cards[0].position = pile.position
+                # Move card to card list
+                for card in self.held_cards:
+                    self.move_card_to_new_pile(card, pile_index)
+
+                reset_position = False
+
         if reset_position:
             # Where-ever we were dropped, it wasn't valid. Reset the each card's position
             # to its original spot.
