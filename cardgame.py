@@ -52,7 +52,7 @@ CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
 CARD_VERTICAL_OFFSET = CARD_HEIGHT * CARD_SCALE * 0.3
 
 # Constants that represent "what pile is what" for the game
-PILE_COUNT = 13
+PILE_COUNT = 3
 BOTTOM_FACE_DOWN_PILE = 0
 BOTTOM_FACE_UP_PILE = 1
 PLAY_PILE_1 = 2
@@ -182,22 +182,25 @@ class MyGame(arcade.Window):
             self.piles[BOTTOM_FACE_DOWN_PILE].append(card)
             
         # - Pull from that pile into the middle piles, all face-down
-        # Loop for each pile
-        for pile_no in range(1, 2 + 1):
-            # Deal proper number of cards for that pile
-            for j in range(1,3):
-                # Pop the card off the deck we are dealing from
-                card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
-                # Put in the proper pile
-                self.piles[pile_no].append(card)
-                # Move card to same position as pile we just put it in
-                card.position = self.pile_mat_list[pile_no].position
-                # Put on top in draw order
-                self.pull_to_top(card)
+        # Deal proper number of cards for that pile
+        for j in range(1,3):
+            # Pop the card off the deck we are dealing from
+            card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
+            # Put in the proper pile
+            self.piles[1].append(card)
+            # Move card to same position as pile we just put it in
+            card.position = self.pile_mat_list[1].position
+            # Put on top in draw order
+            self.pull_to_top(card)
+            top_card = self.piles[1][-1]
+            for i, dropped_card in enumerate(self.piles[1]):
+                dropped_card.position = top_card.center_x + CARD_VERTICAL_OFFSET * (i), \
+                                        top_card.center_y 
                 
         # Flip up the top cards
-        for i in range(1,3):
-            self.piles[i][-1].face_up()
+        
+        self.piles[1][-1].face_up()
+        
 
     def on_draw(self):
         """ Render the screen. """
@@ -348,7 +351,67 @@ class MyGame(arcade.Window):
         if symbol == arcade.key.R:
             # Restart
             self.setup()
+        elif symbol == arcade.key.H:
+            # Hold
+            self.hold()
+            
+    def convert_card_value(self, card_value: str, total: int) -> int:
+        """Return blackjack numeric value for a card string.
 
+        Args:
+            card_value: One of the strings in CARD_VALUES (e.g. 'A', '2', ..., '10', 'J').
+            total: Current total for the hand; used to decide whether Ace should be 11 or 1.
+
+        Returns:
+            Integer value of the card in blackjack.
+        """
+        # Face cards and 10 all count as 10
+        if card_value in ["K", "Q", "J", "10"]:
+            return 10
+
+        # Ace can be 11 or 1. Prefer 11 if it doesn't bust the hand.
+        if card_value == "A":
+            return 11 if total + 11 <= 21 else 1
+
+        # Numeric cards: just convert to int (values are '2'..'9')
+        try:
+            return int(card_value)
+        except ValueError:
+            # Fallback: if something unexpected is passed, treat as 0
+            return 0
+            
+    def hold(self):
+        """Hold logic"""
+        # Count held cards for dealer
+        
+        # While loop until total card pile value is >= 17
+        # Recompute total each iteration, draw from the deck (pile 0) until >= 17
+        for card in self.piles[1]:
+                card.face_up()
+        while True:
+            total = 0
+            for card in self.piles[1]:
+                total += self.convert_card_value(card.value, total)
+
+            if total >= 17:
+                break
+
+            # Dealer should draw: take top card from the face-down deck (pile 0)
+            if len(self.piles[BOTTOM_FACE_DOWN_PILE]) == 0:
+                # No cards left to draw
+                break
+
+            # Pop from deck, put into dealer's pile (pile 1), face up and pull to top
+            card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
+            self.piles[1].append(card)
+            card.position = self.pile_mat_list[1].position
+            card.face_up()
+            self.pull_to_top(card)
+            top_card = self.piles[1][-1]
+            for i, dropped_card in enumerate(self.piles[1]):
+                dropped_card.position = top_card.center_x + CARD_VERTICAL_OFFSET * (i), \
+                                        top_card.center_y 
+            
 
 def main():
     """ Main function """
