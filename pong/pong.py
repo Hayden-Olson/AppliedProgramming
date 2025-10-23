@@ -15,17 +15,28 @@ player = pygame.draw.rect(screen, pygame.Color(255,255,255), pygame.Rect(10, 10,
 com = pygame.draw.rect(screen, pygame.Color(255,255,255), pygame.Rect(coordinates[0] - 20, 10, 10, coordinates[1] / 5))
 
 def ball_bounce(cur_x, cur_y):
-    if ball.x >= coordinates[0] - 10:
+    if ball.x >= com.x and ball.y == com.y:
         cur_x = -5
         ball_move = ball.move(cur_x,cur_y)
-    elif ball.x <= 0:
+    elif ball.x <= player.x and ball.y == player.y:
         cur_x = 5
         ball_move = ball.move(cur_x,cur_y)
     else:
         ball_move = ball.move(cur_x,cur_y)
         
+    if ball.x >= coordinates[0] - 10 or ball.x <= 0:
+        ball.move(coordinates[0]/2,coordinates[1]/2)
+        
     return cur_x, ball_move
     
+def moveAI(cur_y):
+    com.y = ball.y
+    if com.y > 0 and ((com.y + com.height) < (coordinates[1] - com.height)):
+        com_move = com.move(0,(cur_y - 1))
+    else:
+        com_move = com.move(0,0)
+    print(com.y, com.height, coordinates[1])
+    return com_move
 
 while running:
     # poll for events
@@ -68,7 +79,9 @@ while running:
     
     
     # Right Paddle render
-    com = pygame.draw.rect(screen, pygame.Color(255,255,255), pygame.Rect(coordinates[0] - 20, 10, 10, coordinates[1] / 5))
+    com = pygame.draw.rect(screen, pygame.Color(255,255,255), com)
+    
+    com_move = moveAI(cur_y)
     
     # flip() the display to put your work on screen
     pygame.display.flip()
