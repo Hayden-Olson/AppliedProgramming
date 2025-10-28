@@ -30,12 +30,11 @@ def ball_bounce(cur_x, cur_y):
     return cur_x, ball_move
     
 def moveAI(cur_y):
-    com.y = ball.y -5
+    com.y = ball.y
     if com.y > 0 and ((com.y + com.height) < (coordinates[1] - com.height)):
         com_move = com.move(0,(cur_y - 1))
     else:
         com_move = com.move(0,0)
-    print(com.y, com.height, coordinates[1])
     return com_move
 
 while running:

@@ -13,13 +13,15 @@ Press the up arrow key and the down arrow key on your keyboard to move your padd
 
 To learn how to move objects for a game and how to make keyboard controls for the player.
 
+Nothing works properly.
+
 {Provide a link to your YouTube demonstration.  It should be a 4-5 minute demo of the game being played and a walkthrough of the code.}
 
 [Software Demo Video](http://youtube.link.goes.here)
 
 # Development Environment
 
-{Describe the tools that you used to develop the software}
+VSCode was used.
 
 Python was used and the pygame library was used.
 
@@ -27,11 +29,10 @@ Python was used and the pygame library was used.
 
 {Make a list of websites that you found helpful in this project}
 * [pygame.org](https://www.pygame.org/docs/)
-* [Web Site Name](http://url.link.goes.here)
 
 # Future Work
 
 {Make a list of things that you need to fix, improve, and add in the future.}
-* Item 1
-* Item 2
-* Item 3
+* Computer paddle needs reworking.
+* Ball should speed up or at least change trajectory.
+* The collision is broken.
