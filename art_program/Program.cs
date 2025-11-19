@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Windows.Forms;
 
-public class Program
+// This is the main program that runs the art program.
+// Type "dotnet run" in the terminal to run program.
+public static class Program
 {
-    public static Form1 form = new Form1();
     [STAThread]
-    static void Main(string[] args)
+    static void Main()
     {
-        form.FormLayout();;
-        Application.Run(form);
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+
+        using (var form = new Form1())
+        {
+            form.FormLayout();
+            Application.Run(form);
+        }
     }
 }
